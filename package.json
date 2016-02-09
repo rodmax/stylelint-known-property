@@ -21,7 +21,7 @@
     "test": "node test"
   },
   "peerDependencies": {
-    "stylelint": "^2.1.0"
+    "stylelint": "^4.2.0"
   },
   "devDependencies": {
     "stylelint-rule-tester": "^0.3.0"
