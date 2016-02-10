@@ -21,7 +21,8 @@
     "test": "node test"
   },
   "peerDependencies": {
-    "stylelint": "^4.2.0"
+    "stylelint": "^4.2.0",
+    "postcss": "^5.0.4"
   },
   "devDependencies": {
     "stylelint-rule-tester": "^0.3.0"

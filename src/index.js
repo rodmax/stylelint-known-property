@@ -6,17 +6,25 @@ var stylelint   = require('stylelint');
 var ruleName    = 'known-property';
 var knownProperties  = require('./../data');
 var messages = stylelint.utils.ruleMessages(ruleName, {
-    rejected: 'Nesting exceeds maximum nesting depth',
+    rejected: function(propName) {
+        return'Unknown property: ' + propName;
+    }
 });
 
+var defaults = {
+    extra: []
+};
+
 function knownPropertyPlugin(options) {
+    console.log(options);
+    var props = knownProperties.concat(options.extra);
     return function validate(root, result) {
 
         root.walkDecls(function (decl) {
             var prop = decl.prop;
-            if (knownProperties.indexOf(vendor.unprefixed(prop)) === -1) {
+            if (props.indexOf(vendor.unprefixed(prop)) === -1) {
                 report({
-                    message: 'Unknown property: ' + prop,
+                    message: messages.rejected(prop),
                     node: decl,
                     result: result,
                     ruleName: ruleName

@@ -11,6 +11,10 @@ module.exports = {
     rules: {
         'rule-no-duplicate-properties': true,
         'selector-no-universal': true,  // '*' in selector
-        'known-property': [2, ['whitelisted-property'], ['blacklisted-property']]
+        'known-property': {
+            extra: [
+                'blob'
+            ]
+        }
     }
 };
