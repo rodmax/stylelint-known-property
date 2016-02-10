@@ -16,7 +16,6 @@ var defaults = {
 };
 
 function knownPropertyPlugin(options) {
-    console.log(options);
     var props = knownProperties.concat(options.extra);
     return function validate(root, result) {
 
