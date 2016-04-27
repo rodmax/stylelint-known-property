@@ -1,61 +1,38 @@
 var stylelint   = require('stylelint');
 var report      = stylelint.utils.report;
 
-var properties  = require('./../data');
-var messages    = require('./messages');
-
+var vendor = require("postcss").vendor;
+var stylelint   = require('stylelint');
 var ruleName    = 'known-property';
-var browserPrefixPattern = new RegExp('^-(webkit|moz|o|ms)-(.*)');
-
-function reject(result, node, type) {
-  report({
-    message: messages(type, node.prop),
-    node: node,
-    result: result,
-    ruleName: ruleName
-  });
-}
-
-function propertyExists (prop) {
-  return properties.indexOf(prop) > -1;
-}
-
-function hasBrowserPrefix (prop) {
-  return !!prop.match(browserPrefixPattern);
-}
-
-function removeBrowserPrefix (prop) {
-  return prop.replace(browserPrefixPattern, function (matches, prefix, propName) {
-    return propName;
-  });
-}
-
-function validate (result, whitelist, blacklist) {
-  return function (decl) {
-    var prop = decl.prop;
-
-    if (whitelist && whitelist.indexOf(prop) !== -1) {
-      return;
+var knownProperties  = require('./../data');
+var messages = stylelint.utils.ruleMessages(ruleName, {
+    rejected: function(propName) {
+        return'Unknown property: ' + propName;
     }
+});
 
-    if (blacklist && blacklist.indexOf(prop) !== -1) {
-      return reject(result, decl, 'blacklisted');
-    }
-
-    if (propertyExists(prop)) {
-      return;
-    }
-
-    if (hasBrowserPrefix(prop) && propertyExists(removeBrowserPrefix(prop))) {
-      return;
-    }
-        
-    return reject(result, decl, 'unknown');
-  };
-}
-
-module.exports = function(whitelist, blacklist) {
-  return function(root, result) {
-    root.walkDecls(validate(result, whitelist, blacklist));
-  };
+var defaults = {
+    extra: []
 };
+
+function knownPropertyPlugin(options) {
+    var props = knownProperties.concat(options.extra);
+    return function validate(root, result) {
+
+        root.walkDecls(function (decl) {
+            var prop = decl.prop;
+            if (props.indexOf(vendor.unprefixed(prop)) === -1) {
+                report({
+                    message: messages.rejected(prop),
+                    node: decl,
+                    result: result,
+                    ruleName: ruleName
+                });
+            }
+        });
+    };
+}
+
+module.exports = stylelint.createPlugin(ruleName, knownPropertyPlugin);
+module.exports.ruleName = ruleName;
+module.exports.messages = messages;
