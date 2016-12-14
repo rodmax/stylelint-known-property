@@ -12,8 +12,13 @@ var messages = stylelint.utils.ruleMessages(ruleName, {
 });
 
 var defaults = {
-    extra: []
+    extra: [],
+    allowCssVars: false
 };
+
+function isCssVar(options, prop) {
+    return options.allowCssVars && prop.startsWith('--')
+}
 
 function knownPropertyPlugin(options) {
     var props = knownProperties.concat(options.extra);
@@ -21,7 +26,7 @@ function knownPropertyPlugin(options) {
 
         root.walkDecls(function (decl) {
             var prop = decl.prop;
-            if (props.indexOf(vendor.unprefixed(prop)) === -1) {
+            if (props.indexOf(vendor.unprefixed(prop)) === -1 && !isCssVar(options, prop)) {
                 report({
                     message: messages.rejected(prop),
                     node: decl,
