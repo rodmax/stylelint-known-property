@@ -3,7 +3,7 @@ var report      = stylelint.utils.report;
 
 var vendor = require("postcss").vendor;
 var stylelint   = require('stylelint');
-var ruleName    = 'known-property';
+var ruleName    = 'plugin/known-property';
 var knownProperties  = require('./../data');
 var messages = stylelint.utils.ruleMessages(ruleName, {
     rejected: function(propName) {
